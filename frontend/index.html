@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mausam - Personalized Weather</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Mausam</h1>
+        <p class="subtitle">Personalized Weather Assistant</p>
+
+        <div class="card">
+
+            <h2>How are you using Mausam?</h2>
+
+            <div class="roles">
+
+                <button type="button" class="role-btn" data-role="runner">
+                    Runner
+                </button>
+
+                <button type="button" class="role-btn" data-role="farmer">
+                    Farmer
+                </button>
+
+                <button type="button" class="role-btn" data-role="commuter">
+                    Commuter
+                </button>
+
+                <button type="button" class="role-btn" data-role="traveller">
+                    Traveller
+                </button>
+
+
+            </div>
+
+            <label for="location">Current Location</label>
+
+            <input
+                type="text"
+                id="location"
+                placeholder="Example: Bengaluru"
+            >
+
+            <div id="destination-container" class="hidden">
+
+                <label for="destination">Destination</label>
+
+                <input
+                    type="text"
+                    id="destination"
+                    placeholder="Example: Goa, Goa"
+                >
+
+            </div>
+
+            <button type="button" id="get-weather">
+                Get Personalized Weather
+            </button>
+
+        </div>
+
+        <div id="loading" class="hidden">
+            Getting weather information...
+        </div>
+
+        <div id="error" class="hidden"></div>
+
+        <div id="result" class="hidden">
+
+            <h2>Your Personalized Weather</h2>
+
+            <div id="weather-content"></div>
+
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>

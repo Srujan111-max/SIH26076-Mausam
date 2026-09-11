@@ -1,5 +1,6 @@
 from database import init_database, save_user
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 from weather_service import (
     get_personalized_homepage,
@@ -8,6 +9,7 @@ from weather_service import (
 
 
 app = Flask(__name__)
+CORS(app)
 
 init_database()
 

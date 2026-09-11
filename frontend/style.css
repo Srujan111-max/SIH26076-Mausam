@@ -1,0 +1,582 @@
+/* =========================================
+   MAUSAM - PROFESSIONAL WEATHER DASHBOARD
+========================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    min-height: 100vh;
+    color: #172033;
+    background:
+        radial-gradient(circle at top left, rgba(88, 166, 255, 0.22), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(116, 91, 255, 0.18), transparent 35%),
+        linear-gradient(135deg, #eef6ff 0%, #f8fbff 50%, #eef2ff 100%);
+    padding: 35px 20px;
+}
+
+.container {
+    width: min(1100px, 100%);
+    margin: auto;
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
+.container > h1 {
+    text-align: center;
+    font-size: 3rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 5px;
+    background: linear-gradient(90deg, #1769aa, #5b4de8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    text-align: center;
+    color: #667085;
+    font-size: 1.05rem;
+    margin-bottom: 30px;
+}
+
+/* =========================================
+   INPUT CARD
+========================================= */
+
+.card {
+    background: rgba(255, 255, 255, 0.86);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 24px;
+    padding: 30px;
+    box-shadow: 0 18px 50px rgba(35, 63, 102, 0.12);
+    margin-bottom: 25px;
+}
+
+.card h2 {
+    text-align: center;
+    margin-bottom: 22px;
+    font-size: 1.35rem;
+}
+
+/* =========================================
+   ROLE BUTTONS
+========================================= */
+
+.roles {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.role-btn {
+    border: 1px solid #d8e2f0;
+    background: #f8fbff;
+    color: #344054;
+    padding: 14px 10px;
+    border-radius: 14px;
+    font-size: 0.98rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.role-btn:hover {
+    transform: translateY(-2px);
+    border-color: #6c8cff;
+    box-shadow: 0 8px 18px rgba(76, 110, 245, 0.12);
+}
+
+.role-btn.selected {
+    background: linear-gradient(135deg, #2563eb, #635bff);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 8px 20px rgba(57, 92, 220, 0.28);
+}
+
+/* =========================================
+   INPUTS
+========================================= */
+
+.card label {
+    display: block;
+    font-weight: 600;
+    margin: 15px 0 8px;
+    color: #344054;
+}
+
+.card input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #d6dfec;
+    border-radius: 12px;
+    outline: none;
+    font-size: 1rem;
+    background: #fbfdff;
+    transition: all 0.2s ease;
+}
+
+.card input:focus {
+    border-color: #5277f5;
+    box-shadow: 0 0 0 4px rgba(82, 119, 245, 0.12);
+}
+
+/* =========================================
+   MAIN ACTION BUTTON
+========================================= */
+
+#get-weather {
+    width: 100%;
+    margin-top: 22px;
+    padding: 16px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #1769aa, #5b4de8);
+    color: white;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(61, 83, 210, 0.25);
+    transition: all 0.2s ease;
+}
+
+#get-weather:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px rgba(61, 83, 210, 0.32);
+}
+
+#get-weather:active {
+    transform: translateY(0);
+}
+
+/* =========================================
+   LOADING
+========================================= */
+
+#loading {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 18px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    color: #475467;
+    font-weight: 600;
+}
+
+/* =========================================
+   ERROR
+========================================= */
+
+#error {
+    background: #fff1f1;
+    border: 1px solid #ffcaca;
+    color: #b42318;
+    padding: 15px 18px;
+    border-radius: 14px;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+/* =========================================
+   RESULT SECTION
+========================================= */
+
+#result {
+    animation: fadeIn 0.4s ease;
+}
+
+#result > h2 {
+    font-size: 1.7rem;
+    margin-bottom: 18px;
+}
+
+#weather-content > p {
+    display: inline-block;
+    background: white;
+    border-radius: 12px;
+    padding: 9px 15px;
+    margin-bottom: 18px;
+    color: #475467;
+    box-shadow: 0 5px 18px rgba(35, 63, 102, 0.08);
+}
+
+/* =========================================
+   WEATHER GRID
+========================================= */
+
+.weather-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 22px;
+}
+
+.weather-item {
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(219, 228, 241, 0.9);
+    border-radius: 18px;
+    padding: 20px;
+    min-height: 105px;
+    box-shadow: 0 8px 25px rgba(35, 63, 102, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.weather-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(35, 63, 102, 0.13);
+}
+
+.weather-item strong {
+    display: block;
+    color: #667085;
+    font-size: 0.88rem;
+    margin-bottom: 9px;
+}
+
+.weather-item p {
+    font-size: 1.55rem;
+    font-weight: 750;
+    color: #172033;
+}
+
+/* =========================================
+   ALERTS
+========================================= */
+
+.alert {
+    background: #fffaf0;
+    border: 1px solid #f5d99a;
+    border-radius: 18px;
+    padding: 20px;
+    margin-bottom: 22px;
+    box-shadow: 0 7px 22px rgba(120, 87, 20, 0.07);
+}
+
+.alert > strong {
+    display: block;
+    font-size: 1.05rem;
+    margin-bottom: 12px;
+    color: #8a5a00;
+}
+
+.alert ul {
+    padding-left: 20px;
+}
+
+.alert li {
+    margin: 9px 0;
+    color: #604a20;
+    line-height: 1.45;
+}
+
+/* =========================================
+   UPCOMING HOURS
+========================================= */
+
+.recommendation {
+    background: rgba(255, 255, 255, 0.94);
+    border-radius: 20px;
+    padding: 22px;
+    box-shadow: 0 8px 25px rgba(35, 63, 102, 0.08);
+    margin-bottom: 25px;
+}
+
+.recommendation > strong {
+    display: block;
+    font-size: 1.15rem;
+    margin-bottom: 15px;
+}
+
+.recommendation ul {
+    list-style: none;
+    padding: 0;
+}
+
+.recommendation li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    padding: 13px 0;
+    border-bottom: 1px solid #edf1f6;
+    color: #475467;
+}
+
+.recommendation li:last-child {
+    border-bottom: none;
+}
+
+.recommendation li::first-letter {
+    color: #1769aa;
+}
+
+/* =========================================
+   HIDDEN
+========================================= */
+
+.hidden {
+    display: none !important;
+}
+
+/* =========================================
+   ANIMATION
+========================================= */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 850px) {
+
+    .weather-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .roles {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 550px) {
+
+    body {
+        padding: 20px 12px;
+    }
+
+    .container > h1 {
+        font-size: 2.3rem;
+    }
+
+    .card {
+        padding: 20px;
+    }
+
+    .weather-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .weather-item {
+        padding: 15px;
+    }
+
+    .weather-item p {
+        font-size: 1.25rem;
+    }
+
+    .recommendation li {
+        display: block;
+        line-height: 1.6;
+    }
+}
+
+/* =========================================
+   RESULT HEADER
+========================================= */
+
+.result-header {
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 18px;
+    padding: 18px 22px;
+    margin-bottom: 18px;
+    box-shadow: 0 8px 25px rgba(35, 63, 102, 0.07);
+}
+
+.result-label {
+    display: block;
+    color: #667085;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.result-header h3 {
+    font-size: 1.4rem;
+    color: #172033;
+}
+
+
+/* =========================================
+   LOCATION BANNER
+========================================= */
+
+.location-banner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.92);
+    padding: 15px 18px;
+    border-radius: 15px;
+    margin-bottom: 18px;
+    box-shadow: 0 7px 20px rgba(35, 63, 102, 0.06);
+}
+
+.location-banner > span {
+    font-size: 1.3rem;
+}
+
+.location-banner strong {
+    display: block;
+}
+
+.location-banner small {
+    display: block;
+    color: #667085;
+    margin-top: 2px;
+}
+
+
+/* =========================================
+   TRAVELLER ROUTE
+========================================= */
+
+.location-route {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.location-box {
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid #e0e7f0;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 8px 25px rgba(35, 63, 102, 0.07);
+}
+
+.location-box.destination-box {
+    border-color: #cfd7ff;
+}
+
+.location-label {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: #667085;
+    margin-bottom: 7px;
+}
+
+.location-box strong {
+    display: block;
+    font-size: 1.2rem;
+}
+
+.location-box small {
+    display: block;
+    color: #667085;
+    margin-top: 4px;
+}
+
+.route-arrow {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2563eb, #635bff);
+    color: white;
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+
+/* =========================================
+   SECTION TITLES
+========================================= */
+
+.section-title {
+    font-size: 1.15rem;
+    font-weight: 750;
+    margin: 22px 0 13px;
+    color: #172033;
+}
+
+.section-title span {
+    margin-right: 5px;
+}
+
+
+/* =========================================
+   TRAVEL RECOMMENDATION
+========================================= */
+
+.travel-recommendation {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    background: linear-gradient(
+        135deg,
+        rgba(239, 246, 255, 0.95),
+        rgba(245, 243, 255, 0.95)
+    );
+    border: 1px solid #d9e2ff;
+    border-radius: 18px;
+    padding: 20px;
+    margin-bottom: 22px;
+    box-shadow: 0 8px 25px rgba(50, 80, 150, 0.07);
+}
+
+.recommendation-icon {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: white;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+.travel-recommendation strong {
+    display: block;
+    margin-bottom: 6px;
+}
+
+.travel-recommendation p {
+    color: #475467;
+    line-height: 1.5;
+}
+
+
+/* =========================================
+   MOBILE TRAVELLER
+========================================= */
+
+@media (max-width: 650px) {
+
+    .location-route {
+        grid-template-columns: 1fr;
+    }
+
+    .route-arrow {
+        margin: auto;
+        transform: rotate(90deg);
+    }
+}
