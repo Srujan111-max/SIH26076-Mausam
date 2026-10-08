@@ -4,61 +4,78 @@
 
 **Problem Statement:** SIH26076 — Development of personalized homepage for the **Mausam** mobile application.
 
-Mausam is a personalized weather application that provides weather information and role-based recommendations for different users such as runners, farmers, commuters, and travellers.
+Mausam is a personalized weather application that provides weather information, forecasts, alerts, insights, and role-based recommendations for runners, farmers, commuters, and travellers.
+
+### Supported Personas
+- Runner
+- Farmer
+- Commuter
+- Traveller
+
+The project consists of a React/Vite frontend and a Flask/Python backend. Open-Meteo services are used for geocoding, weather, and air-quality data.
 
 ---
 
-## My Contribution — Member 1: Python & Backend Developer
+## My Contribution — Member 1
 
-I worked as **Member 1 (Python & Backend Developer)**.
+I worked as **Member 1 — Python & Backend Developer**.
 
-### Responsibilities completed
-
-- Developed the Flask backend and REST API routes.
-- Implemented the `/api/personalize` POST API for frontend-backend communication.
-- Implemented request validation for user role, location, and traveller destination.
-- Integrated the backend with the weather service developed for the project.
-- Connected the backend with SQLite for storing user preferences.
-- Implemented support for four user roles:
-  - Runner
-  - Farmer
-  - Commuter
-  - Traveller
-- Connected traveller requests with destination weather information.
-- Added backend error handling and HTTP status responses.
-- Tested the API using Python `requests`.
-- Prepared the backend for integration with the Mausam frontend.
+### Responsibilities
+- Developed Flask backend and REST APIs.
+- Implemented `/api/health` and `/api/personalize`.
+- Added request validation and error handling.
+- Integrated SQLite for user preferences.
+- Implemented four user personas.
+- Implemented dynamic user-selected locations.
+- Integrated Open-Meteo Geocoding API.
+- Integrated Open-Meteo Weather API.
+- Integrated Open-Meteo Air Quality API.
+- Added current weather and forecast information.
+- Added rain probability, UV, visibility, sunrise, and sunset.
+- Added AQI, PM2.5, PM10, nitrogen dioxide, and ozone.
+- Implemented traveller current-location and destination weather.
+- Added destination forecasts and travel information.
+- Implemented persona-specific recommendations.
+- Added weather alerts and insights.
+- Tested APIs using Python `requests`.
+- Integrated Flask backend with React/Vite frontend.
+- Tested all four persona flows.
 
 ---
 
-## Backend Architecture
+## Key Features
+
+### Current Weather
+Provides temperature, feels-like temperature, humidity, wind, visibility, weather condition, rain probability, UV index, sunrise, and sunset.
+
+### Air Quality
+Provides US AQI, PM2.5, PM10, nitrogen dioxide, and ozone.
+
+### Forecasts
+Provides hourly and multi-day weather forecasts.
+
+### Dynamic Locations
+Users can enter their preferred location instead of depending on a fixed city.
+
+### Personalization
+Weather conditions are processed according to the selected persona using primarily rule-based logic.
+
+### Traveller Support
+Travellers can provide both current location and destination. The system retrieves weather and forecast information for both.
+
+### Alerts and Insights
+Provides persona-related weather alerts, insights, and recommendations.
+
+---
+
+## Backend API
+
+**Base URL:** `http://127.0.0.1:5000`
+
+### Health Check
 
 ```text
-Frontend
-   |
-   | JSON POST request
-   v
-Flask Backend (app.py)
-   |
-   +----> SQLite Database (database.py)
-   |
-   +----> Weather Service (weather_service.py)
-              |
-              +----> Open-Meteo Geocoding API
-              |
-              +----> Open-Meteo Weather API
-```
-
----
-
-## API Endpoints
-
-### 1. Health Check
-
-**GET**
-
-```text
-/api/health
+GET /api/health
 ```
 
 Example response:
@@ -70,95 +87,96 @@ Example response:
 }
 ```
 
----
-
-### 2. Personalized Homepage
-
-**POST**
+### Personalized Homepage
 
 ```text
-/api/personalize
+POST /api/personalize
 ```
 
-The frontend sends the user's role and location to the backend.
-
-#### Runner
-
-Request:
+Example request:
 
 ```json
 {
   "role": "runner",
-  "location": "Bengaluru"
+  "location": "Mysuru"
 }
 ```
 
-#### Farmer
-
-Request:
-
-```json
-{
-  "role": "farmer",
-  "location": "Davangere"
-}
-```
-
-#### Commuter
-
-Request:
-
-```json
-{
-  "role": "commuter",
-  "location": "Bengaluru"
-}
-```
-
-#### Traveller
-
-Request:
+Traveller request:
 
 ```json
 {
   "role": "traveller",
-  "location": "Bengaluru",
-  "destination": "Goa, Goa"
+  "location": "Mumbai",
+  "destination": "Delhi"
 }
 ```
 
-The backend returns personalized weather information, alerts, recommendations, widgets, and a generated user ID.
+The API returns personalized weather data, forecasts, recommendations, alerts, and insights.
 
 ---
 
 ## Database
 
-SQLite is used to store basic user preferences.
+The project uses **SQLite** for basic user preference storage.
 
-### `users` table
+Stored information includes:
+- User ID
+- Location
+- Role
+- Destination
 
-| Field | Description |
-|---|---|
-| `id` | Unique user ID |
-| `location` | Current location |
-| `role` | User persona |
-| `destination` | Traveller destination, if applicable |
-
-The database is initialized automatically when the Flask application starts.
+Database logic is implemented in `database.py`.
 
 ---
 
-## Technologies Used
+## Weather Service
 
-- Python
-- Flask
-- REST API
-- JSON
-- SQLite
-- Requests
-- Open-Meteo Weather API
-- Open-Meteo Geocoding API
-- Git & GitHub
+Weather processing is implemented in `weather_service.py`.
+
+It handles:
+- Location geocoding
+- Current weather
+- Hourly forecast
+- Multi-day forecast
+- Air quality
+- Persona-specific processing
+- Recommendations
+- Alerts
+- Insights
+
+---
+
+## External APIs
+
+### Open-Meteo Geocoding API
+Converts location names into geographic coordinates.
+
+### Open-Meteo Weather API
+Provides current weather, hourly forecasts, daily forecasts, rain probability, UV, sunrise, sunset, and visibility.
+
+### Open-Meteo Air Quality API
+Provides AQI and pollutant information.
+
+---
+
+## Frontend
+
+The frontend is built using:
+- React
+- Vite
+- TypeScript
+
+Important frontend files:
+
+```text
+src/lib/mausam/api.ts
+src/lib/mausam/types.ts
+src/routes/dashboard.tsx
+src/routes/preferences.$role.tsx
+```
+
+The frontend communicates with the Flask backend through `/api/personalize`.
 
 ---
 
@@ -166,101 +184,212 @@ The database is initialized automatically when the Flask application starts.
 
 ```text
 SIH26076-Mausam/
-│
-├── app.py                  # Flask application and API routes
-├── database.py             # SQLite database operations
-├── weather_service.py      # Weather API and personalization service
-├── test_api.py             # API testing script
-├── check_database.py       # Database verification script
-├── .gitignore              # Git ignored files
-└── README.md               # Project documentation
+├── app.py
+├── database.py
+├── weather_service.py
+├── test_api.py
+├── check_database.py
+├── README.md
+└── mausam-persona-builder-main/
+    └── mausam-persona-builder-main/
+        ├── package.json
+        └── src/
+            ├── lib/mausam/
+            └── routes/
 ```
-
-> `mausam.db`, `venv/`, and Python cache files are intentionally excluded from Git using `.gitignore`.
 
 ---
 
-## Setup Instructions
+## Technologies Used
 
-### 1. Clone the repository
+**Backend**
+- Python
+- Flask
+- Flask-CORS
+- SQLite
+- Requests
+- REST API
 
-```bash
-git clone https://github.com/Srujan111-max/SIH26076-Mausam.git
-cd SIH26076-Mausam
-```
+**Frontend**
+- React
+- Vite
+- TypeScript
 
-### 2. Create a virtual environment
+**APIs**
+- Open-Meteo Geocoding API
+- Open-Meteo Weather API
+- Open-Meteo Air Quality API
 
-Windows:
+**Tools**
+- Visual Studio Code
+- Git
+- GitHub
+- PowerShell
+
+---
+
+## Setup
+
+### Backend
 
 ```powershell
 python -m venv venv
-```
-
-### 3. Activate the virtual environment
-
-PowerShell:
-
-```powershell
-venv\Scripts\Activate.ps1
-```
-
-### 4. Install dependencies
-
-```powershell
-pip install flask requests
-```
-
-### 5. Run the backend
-
-```powershell
+.\venv\Scripts\Activate.ps1
+pip install flask flask-cors requests
 python app.py
 ```
 
-The backend will run at:
+Backend runs at:
 
 ```text
 http://127.0.0.1:5000
 ```
 
-### 6. Test the API
+### Frontend
 
-In another terminal, with the virtual environment activated:
+Navigate to:
+
+```text
+mausam-persona-builder-main\mausam-persona-builder-main
+```
+
+Then run:
 
 ```powershell
-python test_api.py
+npm install
+npm run dev
 ```
+
+---
+
+## Testing
+
+The backend was tested using Python `requests`.
+
+Testing covered:
+- Runner
+- Farmer
+- Commuter
+- Traveller
+- Dynamic locations
+- Current weather
+- Hourly forecasts
+- Multi-day forecasts
+- Air quality
+- Rain probability
+- UV
+- Sunrise and sunset
+- Traveller destination weather
+- Alerts
+- Insights
+- Frontend-backend communication
+
+Example:
+
+```python
+import requests
+
+url = "http://127.0.0.1:5000/api/personalize"
+data = {"role": "runner", "location": "Mysuru"}
+
+response = requests.post(url, json=data)
+
+print(response.status_code)
+print(response.json())
+```
+
+---
+
+## Current Project Status
+
+The core Mausam personalization system is implemented and integrated.
+
+### Completed
+- Flask backend
+- REST APIs
+- SQLite integration
+- Open-Meteo integration
+- Dynamic locations
+- Four personas
+- Current weather
+- Hourly and multi-day forecasts
+- Air quality and AQI
+- PM2.5 and PM10
+- UV index
+- Rain probability
+- Sunrise and sunset
+- Traveller destination weather
+- Persona-specific recommendations
+- Alerts and insights
+- React/Vite integration
+- End-to-end testing
+
+---
+
+## Limitations
+
+- Location is currently entered by the user rather than obtained through GPS.
+- Personalization is primarily rule-based.
+- The current project runs locally.
+- Advanced ML personalization is not currently implemented.
+- Weather data depends on external Open-Meteo services.
+
+---
+
+## Future Enhancements
+
+- GPS-based location detection
+- User authentication
+- Machine-learning-based personalization
+- Historical weather analysis
+- Weather trend prediction
+- Advanced agricultural recommendations
+- Push notifications
+- Cloud deployment
+- Mobile application integration
 
 ---
 
 ## Team Structure
 
-| Member | Role | Main Responsibility |
-|---|---|---|
-| Member 1 | Python & Backend Developer | Flask backend, APIs, SQLite, personalization integration |
-| Member 2 | API & Backend | Weather API and weather-data services |
-| Member 3 | Frontend Developer | Frontend application and backend integration |
-| Member 4 | UI/UX Designer | User interface and user experience |
-| Member 5 | Research & Documentation | Research, documentation and presentation |
-| Member 6 | Testing & Integration | Testing, debugging and final integration |
+| Member | Role |
+|---|---|
+| Member 1 | Python & Backend Developer |
+| Member 2 | API & Backend |
+| Member 3 | Frontend Developer |
+| Member 4 | UI/UX Designer |
+| Member 5 | Research & Documentation |
+| Member 6 | Testing & Integration |
 
 ---
 
 ## Project Goal
 
-The goal of Mausam is to move beyond displaying generic weather information by providing a **personalized weather homepage** based on the user's needs and activities.
+The goal of Mausam is to transform general weather information into **useful, personalized weather guidance**.
 
-For example:
+| Persona | Focus |
+|---|---|
+| Runner | Running Conditions |
+| Farmer | Farm Weather Guidance |
+| Commuter | Commute Conditions |
+| Traveller | Travel Outlook |
 
-- **Runner:** running conditions, UV information and suitable activity periods.
-- **Farmer:** rainfall, humidity and agricultural weather alerts.
-- **Commuter:** rain, visibility and commuting alerts.
-- **Traveller:** current-location weather combined with destination weather and travel recommendations.
+The current system uses rule-based personalization and can be extended with machine-learning techniques in future versions.
 
 ---
 
-## Backend Status
+## Project Identification
 
-The core Member 1 backend implementation is complete and tested with all four supported user roles.
+**Smart India Hackathon 2026**
+
+**Problem Statement:** SIH26076
+
+**Project:** Mausam — Personalized Weather Homepage
+
+**Member 1:** Python & Backend Developer
+
+**Repository:** `Srujan111-max/SIH26076-Mausam`
+
+---
 
 **SIH 2026 — SIH26076**
