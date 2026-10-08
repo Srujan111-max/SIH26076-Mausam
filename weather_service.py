@@ -6,6 +6,7 @@ import requests
 
 GEOCODING_URL = "https://geocoding-api.open-meteo.com/v1/search"
 FORECAST_URL = "https://api.open-meteo.com/v1/forecast"
+AIR_QUALITY_URL = "https://air-quality-api.open-meteo.com/v1/air-quality"
 
 # ALLOWED_PERSONAS is kept as an alias for compatibility with existing imports.
 ALLOWED_ROLES = {"runner", "farmer", "commuter", "traveller"}
@@ -41,20 +42,33 @@ class WeatherServiceError(Exception):
 
 
 def get_json(url: str, params: dict[str, Any]) -> dict[str, Any]:
-    """Call an external API safely and return JSON."""
-    try:
-        response = requests.get(url, params=params, timeout=15)
-        response.raise_for_status()
-        return response.json()
+    """Call an external API safely with a small retry."""
+    last_error = None
 
-    except requests.Timeout as error:
-        raise WeatherServiceError("Weather service took too long to respond.") from error
+    for attempt in range(3):
+        try:
+            response = requests.get(
+                url,
+                params=params,
+                timeout=20,
+            )
+            response.raise_for_status()
+            return response.json()
 
-    except requests.RequestException as error:
-        raise WeatherServiceError("Could not contact the weather service.") from error
+        except requests.Timeout as error:
+            last_error = error
 
-    except ValueError as error:
-        raise WeatherServiceError("Weather service returned invalid JSON.") from error
+        except requests.RequestException as error:
+            last_error = error
+
+        except ValueError as error:
+            raise WeatherServiceError(
+                "Weather service returned invalid JSON."
+            ) from error
+
+    raise WeatherServiceError(
+        "Could not contact the weather service after multiple attempts."
+    ) from last_error
 
 
 def geocode_location(location: str) -> dict[str, Any]:
@@ -119,6 +133,18 @@ def fetch_weather(latitude: float, longitude: float) -> dict[str, Any]:
 
     return get_json(FORECAST_URL, params)
 
+def fetch_air_quality(latitude: float, longitude: float) -> dict[str, Any]:
+    """Fetch current AQI and major pollutant values."""
+    params = {
+        "latitude": latitude,
+        "longitude": longitude,
+        "timezone": "auto",
+        "current": (
+            "us_aqi,pm2_5,pm10,nitrogen_dioxide,ozone"
+        ),
+    }
+
+    return get_json(AIR_QUALITY_URL, params)
 
 def weather_description(code: int | None) -> str:
     """Convert an Open-Meteo numeric weather code into readable text."""
@@ -229,10 +255,32 @@ def normalize_weather(location: dict[str, Any], raw_weather: dict[str, Any]) -> 
 
 
 def get_weather_for_location(location_name: str) -> dict[str, Any]:
-    """Get fully normalized weather for one location."""
+    """Get fully normalized weather and AQI for one location."""
     location = geocode_location(location_name)
-    raw_weather = fetch_weather(location["latitude"], location["longitude"])
-    return normalize_weather(location, raw_weather)
+
+    raw_weather = fetch_weather(
+        location["latitude"],
+        location["longitude"],
+    )
+
+    raw_air_quality = fetch_air_quality(
+        location["latitude"],
+        location["longitude"],
+    )
+
+    weather = normalize_weather(location, raw_weather)
+
+    air_current = raw_air_quality.get("current", {})
+
+    weather["air_quality"] = {
+        "us_aqi": air_current.get("us_aqi"),
+        "pm2_5": air_current.get("pm2_5"),
+        "pm10": air_current.get("pm10"),
+        "nitrogen_dioxide": air_current.get("nitrogen_dioxide"),
+        "ozone": air_current.get("ozone"),
+    }
+
+    return weather
 
 
 def create_alert(level: str, title: str, message: str) -> dict[str, str]:

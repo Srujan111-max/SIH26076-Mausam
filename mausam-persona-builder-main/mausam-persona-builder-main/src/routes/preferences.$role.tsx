@@ -42,6 +42,7 @@ function Preferences() {
   const heading = HEADINGS[roleId] ?? { title: "Your preferences", sub: "Fine-tune your forecast." };
   const def = roleById(roleId);
   const values = state.prefs[roleId] ?? {};
+  const location = values.location ?? "";
 
   const next = () => {
     const upcoming = queue[index + 1];
@@ -101,6 +102,21 @@ function Preferences() {
         </div>
 
         <SectionCard className="mt-5 space-y-4">
+          <label className="block">
+          <span className="text-[13px] font-semibold text-ink">
+            {roleId === "traveller" ? "Your current location" : "Your location"}
+          </span>
+
+          <input
+            type="text"
+            value={location}
+            placeholder="Enter your city"
+            onChange={(e) =>
+              mausam.setPref(roleId, "location", e.target.value)
+            }
+            className="mt-1.5 w-full rounded-xl border border-border bg-background px-3.5 py-3 text-sm text-ink outline-none placeholder:text-ink-muted focus:border-primary"
+          />
+        </label>
           {fields.map((field) => (
             <label key={field.key} className="block">
               <span className="text-[13px] font-semibold text-ink">{field.label}</span>

@@ -54,7 +54,7 @@ def personalize():
             "message": "Location is required"
         }), 400
 
-    role = role.lower()
+    role = role.strip().lower()
 
     # Traveller requires destination
     if role == "traveller" and not destination:
