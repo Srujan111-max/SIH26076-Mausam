@@ -1,3 +1,8 @@
+<picture>
+   <source media="(prefers-color-scheme: dark)" srcset="art/header-dark.png">
+   <img alt="Logo for SIH26076 Mausam" src="art/header-light.png">
+</picture>
+
 # Mausam — Personalized Weather Homepage
 
 ## SIH 2026 Project
